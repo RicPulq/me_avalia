@@ -22,7 +22,7 @@ const Main = () => {
   const [items, setItems] = React.useState([{}])
 
   const [user, setUser] = useState({})
-  const [data, setData] = useState()
+  const [data, setData] = useState([{}])
 
   const [form, setForm] = useState(false)
   const [type, setType] = useState('new')
@@ -33,15 +33,16 @@ const Main = () => {
   const aluno = async() => {
     try {
       const response = await api.get('/aluno/')
+      // const lesson = await api.get(`/aulas/${response.data[0].ratings[0].universityclass}`)
+      // console.log(lesson)
       if (response){
         console.log(localStorage.getItem("token"))
         console.log(response.data)
-        setUser(response.data[0])
+        setUser(response.data.aluno)
         // console.log(user.name) // juca filho
-        // setData(response.data[1])
-        console.log(data)
-        // console.log(response.data[1])
-        setItems(response.data[0].ratings)
+        setData(response.data.aula)
+        console.log(response.data.aluno.ratings)
+        setItems(response.data.aluno.ratings)
       }
     } catch (error) {
       console.log(error)
@@ -53,15 +54,41 @@ const Main = () => {
 
   return (
     <>
-    {/* <header className="mt-6 text-center text-3xl font-extrabold text-secondary">{user.name}</header> */}
-    {/* <div>
-      <button onClick={()=>aluno()}>TESTE</button>
-    </div> */}
+    <header className="mt-6 text-center text-3xl font-extrabold text-secondary">{user.name}</header>
+    {/* Cria avaliação da aula recem terminada */}
     {form === false ? <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-4">
       <div className="bg-white p-4 rounded shadow-md">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-secondary">{user.name}</h2>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-secondary">Aula Para Avaliar</h2>
+      </div>
+      <ul>
+        <span>{data.final}</span>
+        <button 
+          className="mr-2 text-blue-500"
+          onClick={
+            () => {
+              setData(data)
+              setType('edit')
+              setForm(true)
+            }
+          }
+        >
+          <FiEdit />
+        </button>
+      </ul>
+      </div>
+      </div>
+    </div> : <Form data={data} cancel={() => setForm(false)} type={type} />}
+
+
+
+    {/* Avaliações Disponíveis para Atualização */}
+    {form === false ? <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-4">
+      <div className="bg-white p-4 rounded shadow-md">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-secondary">Updates Disponiveis</h2>
       </div>
       <ul>
         {items.map((item, index) => (
@@ -75,7 +102,7 @@ const Main = () => {
                   <FaStar
                     key={index}
                     size={20}
-                    color={starValue <= item.rating ? 'gold' : 'gray'}
+                    color={starValue <= item.score ? 'gold' : 'gray'}
                   />
                 );
               })}

@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FaStar } from 'react-icons/fa'
+import api from '@/services/api'
+
 
 const StarRatingForm = (props) => {
   const [text, setText] = useState('')
@@ -10,14 +12,25 @@ const StarRatingForm = (props) => {
 
   const router = useRouter()
 
-  const handleSubmit = () => {
-    console.log(submit)
+  const handleSubmit = async(rate, feedback) => {
+    const res = await api.get('aluno/')
+    console.log(res.data)
+    const aux = await api.post('/avaliacao/', {
+      "score": rate,
+      "feedback": feedback,
+      "students": res.data.aluno.uuid,
+      "universityclass": res.data.aula.uuid
+    })
+
+    return aux
   }
+
+  useEffect(()=>{handleSubmit()}, [])
 
   useEffect(() => {
     if (props.data !== null) {
-      setText(props.data.label)
-      setRating(props.data.rating)
+      setText(props.data.feedback)
+      setRating(props.data.score)
     } else {
       setText('')
       setRating(0)
@@ -69,7 +82,7 @@ const StarRatingForm = (props) => {
           </button>
           <button 
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            onClick={handleSubmit}
+            onClick={()=> handleSubmit(rating, text)}
           >
             Confirmar
           </button>
