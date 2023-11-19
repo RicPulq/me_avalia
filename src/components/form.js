@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FaStar } from 'react-icons/fa'
 import api from '@/services/api'
+import { Prosto_One } from 'next/font/google'
 
 
 const StarRatingForm = (props) => {
@@ -19,10 +20,9 @@ const StarRatingForm = (props) => {
       "score": rate,
       "feedback": feedback,
       "students": res.data.aluno.uuid,
-      "universityclass": res.data.aula.uuid
+      "universityclass": res.data.aula.classroom_id.uuid
     })
-
-    return aux
+    console.log(aux)
   }
 
   useEffect(()=>{handleSubmit()}, [])
@@ -40,8 +40,7 @@ const StarRatingForm = (props) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="p-6 bg-white rounded shadow-lg w-96">
-        <h2 className="text-2xl mb-4">Avaliação da aula </h2>
-
+        <h2 className="text-2xl mb-4">Avaliação {props.data.classroom_id.course.name} - {props.data.final}</h2>
         <div className="mb-4">
           <label htmlFor="subject" className="block mb-2 text-sm font-medium text-gray-600">Feedback</label>
           <input 
